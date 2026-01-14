@@ -13,7 +13,7 @@ const createArticleSchema = z.object({
             .string()
             .min(10, 'Content must be at least 10 characters'),
         status: z.enum(['DRAFT', 'PUBLISHED']).optional(),
-    }),
+    }).passthrough(),
 });
 
 /**
@@ -34,7 +34,7 @@ const updateArticleSchema = z.object({
             .min(10, 'Content must be at least 10 characters')
             .optional(),
         status: z.enum(['DRAFT', 'PUBLISHED']).optional(),
-    }),
+    }).passthrough(),
 });
 
 /**

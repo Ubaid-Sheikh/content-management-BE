@@ -8,6 +8,7 @@ const errorHandler = (err, req, res, next) => {
 
     // Zod Validation Errors
     if (err instanceof ZodError) {
+        console.warn('Validation Failure:', JSON.stringify(err.errors, null, 2));
         return res.status(400).json({
             success: false,
             message: 'Validation error',
@@ -15,6 +16,21 @@ const errorHandler = (err, req, res, next) => {
                 field: e.path.join('.'),
                 message: e.message,
             })),
+        });
+    }
+
+    // Multer Errors
+    if (err.code === 'LIMIT_FILE_SIZE') {
+        return res.status(400).json({
+            success: false,
+            message: 'File too large. Maximum size allowed is 5MB.',
+        });
+    }
+
+    if (err.message && err.message.includes('Invalid file type')) {
+        return res.status(400).json({
+            success: false,
+            message: err.message,
         });
     }
 
@@ -43,6 +59,7 @@ const errorHandler = (err, req, res, next) => {
     }
 
     // Default Server Error
+    console.error('Unhandled Error:', err);
     res.status(500).json({
         success: false,
         message: 'Internal server error',
