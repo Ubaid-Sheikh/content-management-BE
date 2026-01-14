@@ -25,7 +25,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Serve static files from uploads directory
-app.use('/uploads', express.static('uploads'));
+const uploadDir = process.env.VERCEL ? '/tmp' : 'uploads';
+app.use('/uploads', express.static(uploadDir));
 
 // Request logging in development
 if (config.nodeEnv === 'development') {
