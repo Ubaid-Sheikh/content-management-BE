@@ -125,10 +125,11 @@ const updateArticle = async (id, userId, userRole, updateData) => {
         throw error;
     }
 
-    // Authorization check: Only owner or admin can update
+    // Authorization check: Only writer/owner or admin can update
     if (article.authorId !== userId && userRole !== 'ADMIN') {
-        const error = new Error('You do not have permission to update this article');
+        const error = new Error('Access Denied: You can only edit articles that you have authored.');
         error.statusCode = 403;
+        error.operational = true;
         throw error;
     }
 
