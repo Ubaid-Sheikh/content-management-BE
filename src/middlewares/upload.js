@@ -3,9 +3,13 @@ const path = require('path');
 const fs = require('fs');
 
 // Ensure upload directory exists
-const uploadDir = 'uploads';
-if (!fs.existsSync(uploadDir)) {
-    fs.mkdirSync(uploadDir);
+const uploadDir = process.env.VERCEL ? '/tmp' : 'uploads';
+try {
+    if (!fs.existsSync(uploadDir) && !process.env.VERCEL) {
+        fs.mkdirSync(uploadDir);
+    }
+} catch (err) {
+    console.error('Error creating upload directory:', err);
 }
 
 const storage = multer.diskStorage({

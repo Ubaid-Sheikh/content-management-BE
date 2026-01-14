@@ -9,12 +9,17 @@ const app = express();
 
 // Middleware
 app.use(cors({
-    origin: [
-        'http://localhost:5173',
-        'https://content-management-fe-ten.vercel.app',
-        /\.vercel\.app$/
-    ],
-    credentials: true
+    origin: (origin, callback) => {
+        // Allow all Vercel subdomains and localhost
+        if (!origin || origin.includes('vercel.app') || origin.includes('localhost')) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
 }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
