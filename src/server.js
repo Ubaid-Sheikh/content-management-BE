@@ -11,9 +11,10 @@ const app = express();
 app.use(cors({
     origin: [
         'http://localhost:5173',
-        'https://content-management-fe-ten.vercel.app/',
+        'https://content-management-fe-ten.vercel.app',
         /\.vercel\.app$/
-    ]
+    ],
+    credentials: true
 }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -55,25 +56,17 @@ app.use((req, res) => {
 // Error Handler (must be last)
 app.use(errorHandler);
 
-// Start server
-const PORT = config.port;
-app.listen(PORT, () => {
-    console.log('='.repeat(50));
-    console.log(`🚀 Server running on port ${PORT}`);
-    console.log(`📝 Environment: ${config.nodeEnv}`);
-    console.log(`🔗 API: http://localhost:${PORT}/api`);
-    console.log('='.repeat(50));
-});
+// Only start server if not in Vercel
+if (process.env.NODE_ENV !== 'production' || !process.env.VERCEL) {
+    const PORT = config.port;
+    app.listen(PORT, () => {
+        console.log('='.repeat(50));
+        console.log(`🚀 Server running on port ${PORT}`);
+        console.log(`📝 Environment: ${config.nodeEnv}`);
+        console.log(`🔗 API: http://localhost:${PORT}/api`);
+        console.log('='.repeat(50));
+    });
+}
 
-// Graceful shutdown
-process.on('SIGTERM', () => {
-    console.log('SIGTERM received, shutting down gracefully...');
-    process.exit(0);
-});
-
-process.on('SIGINT', () => {
-    console.log('SIGINT received, shutting down gracefully...');
-    process.exit(0);
-});
-
+// Export for Vercel
 module.exports = app;
