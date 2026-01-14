@@ -9,9 +9,8 @@ const app = express();
 
 // Middleware
 app.use(cors({
-    origin: (origin, callback) => {
-        // Allow all Vercel subdomains and localhost
-        if (!origin || origin.includes('vercel.app') || origin.includes('localhost')) {
+    origin: function (origin, callback) {
+        if (!origin || /localhost|vercel\.app$/.test(origin)) {
             callback(null, true);
         } else {
             callback(new Error('Not allowed by CORS'));
@@ -19,8 +18,13 @@ app.use(cors({
     },
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization']
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
+    preflightContinue: false,
+    optionsSuccessStatus: 204
 }));
+
+// Explicitly handle preflight requests
+app.options('*', cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
