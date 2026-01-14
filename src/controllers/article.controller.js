@@ -1,19 +1,9 @@
 const articleService = require('../services/article.service');
 
-/**
- * Get All Articles (Public)
- * GET /articles
- */
 const getArticles = async (req, res, next) => {
     try {
         const { page, limit, status, search } = req.query;
-
-        const result = await articleService.getArticles({
-            page,
-            limit,
-            status,
-            search,
-        });
+        const result = await articleService.getArticles({ page, limit, status, search });
 
         res.status(200).json({
             success: true,
@@ -24,14 +14,9 @@ const getArticles = async (req, res, next) => {
     }
 };
 
-/**
- * Get Article by ID (Public)
- * GET /articles/:id
- */
 const getArticleById = async (req, res, next) => {
     try {
         const { id } = req.params;
-
         const article = await articleService.getArticleById(id);
 
         res.status(200).json({
@@ -43,10 +28,6 @@ const getArticleById = async (req, res, next) => {
     }
 };
 
-/**
- * Create Article (Admin, Editor)
- * POST /articles
- */
 const createArticle = async (req, res, next) => {
     try {
         const { title, content, status } = req.body;
@@ -54,7 +35,6 @@ const createArticle = async (req, res, next) => {
         let imageUrl = null;
 
         if (req.file) {
-            // Construct the public URL for the image
             const protocol = req.headers['x-forwarded-proto'] || req.protocol;
             imageUrl = `${protocol}://${req.get('host')}/uploads/${req.file.filename}`;
         }
@@ -69,7 +49,6 @@ const createArticle = async (req, res, next) => {
 
         res.status(201).json({
             success: true,
-            message: 'Article created successfully',
             data: { article },
         });
     } catch (error) {
@@ -77,10 +56,6 @@ const createArticle = async (req, res, next) => {
     }
 };
 
-/**
- * Update Article (Owner or Admin)
- * PUT /articles/:id
- */
 const updateArticle = async (req, res, next) => {
     try {
         const { id } = req.params;
@@ -104,7 +79,6 @@ const updateArticle = async (req, res, next) => {
 
         res.status(200).json({
             success: true,
-            message: 'Article updated successfully',
             data: { article },
         });
     } catch (error) {
@@ -112,15 +86,10 @@ const updateArticle = async (req, res, next) => {
     }
 };
 
-/**
- * Delete Article (Admin only)
- * DELETE /articles/:id
- */
 const deleteArticle = async (req, res, next) => {
     try {
         const { id } = req.params;
         const userRole = req.user.role;
-
         const result = await articleService.deleteArticle(id, userRole);
 
         res.status(200).json({

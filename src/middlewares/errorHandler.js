@@ -1,14 +1,7 @@
 const { ZodError } = require('zod');
 
-/**
- * Centralized Error Handling Middleware
- */
 const errorHandler = (err, req, res, next) => {
-    console.error('Error:', err);
-
-    // Zod Validation Errors
     if (err instanceof ZodError) {
-        console.warn('Validation Failure:', JSON.stringify(err.errors, null, 2));
         return res.status(400).json({
             success: false,
             message: 'Validation error',
@@ -19,7 +12,6 @@ const errorHandler = (err, req, res, next) => {
         });
     }
 
-    // JWT Errors
     if (err.name === 'JsonWebTokenError') {
         return res.status(401).json({
             success: false,
@@ -34,7 +26,6 @@ const errorHandler = (err, req, res, next) => {
         });
     }
 
-    // Multer Errors
     if (err.code === 'LIMIT_FILE_SIZE') {
         return res.status(400).json({
             success: false,
@@ -49,7 +40,6 @@ const errorHandler = (err, req, res, next) => {
         });
     }
 
-    // Prisma Errors
     if (err.code === 'P2002') {
         return res.status(409).json({
             success: false,
@@ -65,7 +55,6 @@ const errorHandler = (err, req, res, next) => {
         });
     }
 
-    // Custom Application Errors
     if (err.statusCode) {
         return res.status(err.statusCode).json({
             success: false,
@@ -73,8 +62,7 @@ const errorHandler = (err, req, res, next) => {
         });
     }
 
-    // Default Server Error
-    console.error('CRITICAL ERROR:', err);
+    console.error('Unhandled Error:', err);
     res.status(err.status || 500).json({
         success: false,
         message: err.operational ? err.message : 'An unexpected server error occurred',
