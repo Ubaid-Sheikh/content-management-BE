@@ -86,11 +86,12 @@ const getArticleById = async (id) => {
 /**
  * Create a new article
  */
-const createArticle = async ({ title, content, status = 'DRAFT', authorId }) => {
+const createArticle = async ({ title, content, imageUrl, status = 'DRAFT', authorId }) => {
     const article = await prisma.article.create({
         data: {
             title,
             content,
+            imageUrl,
             status,
             authorId,
         },

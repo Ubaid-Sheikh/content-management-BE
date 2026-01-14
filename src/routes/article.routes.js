@@ -4,6 +4,7 @@ const articleController = require('../controllers/article.controller');
 const authenticate = require('../middlewares/authenticate');
 const authorize = require('../middlewares/authorize');
 const validate = require('../middlewares/validate');
+const upload = require('../middlewares/upload');
 const {
     createArticleSchema,
     updateArticleSchema,
@@ -35,6 +36,7 @@ router.post(
     '/',
     authenticate,
     authorize('ADMIN', 'EDITOR'),
+    upload.single('image'),
     validate(createArticleSchema),
     articleController.createArticle
 );
@@ -48,6 +50,7 @@ router.put(
     '/:id',
     authenticate,
     authorize('ADMIN', 'EDITOR'),
+    upload.single('image'),
     validate(updateArticleSchema),
     articleController.updateArticle
 );

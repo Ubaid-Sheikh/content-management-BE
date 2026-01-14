@@ -29,6 +29,7 @@ model Article {
   id        String        @id @default(uuid())
   title     String
   content   String        @db.Text
+  imageUrl  String?
   status    ArticleStatus @default(DRAFT)
   authorId  String
   createdAt DateTime      @default(now())

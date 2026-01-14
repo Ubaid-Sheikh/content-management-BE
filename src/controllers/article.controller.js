@@ -51,10 +51,17 @@ const createArticle = async (req, res, next) => {
     try {
         const { title, content, status } = req.body;
         const authorId = req.user.id;
+        let imageUrl = null;
+
+        if (req.file) {
+            // Construct the public URL for the image
+            imageUrl = `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`;
+        }
 
         const article = await articleService.createArticle({
             title,
             content,
+            imageUrl,
             status,
             authorId,
         });
@@ -80,11 +87,17 @@ const updateArticle = async (req, res, next) => {
         const userId = req.user.id;
         const userRole = req.user.role;
 
+        const updateData = { title, content, status };
+
+        if (req.file) {
+            updateData.imageUrl = `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`;
+        }
+
         const article = await articleService.updateArticle(
             id,
             userId,
             userRole,
-            { title, content, status }
+            updateData
         );
 
         res.status(200).json({
