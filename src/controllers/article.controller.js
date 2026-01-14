@@ -56,7 +56,8 @@ const createArticle = async (req, res, next) => {
         if (req.file) {
             // Construct the public URL for the image
             const protocol = req.headers['x-forwarded-proto'] || req.protocol;
-            imageUrl = `${protocol}://${req.get('host')}/uploads/${req.file.filename}`;
+            const filename = req.file.filename || `temp-${Date.now()}`; // Fallback if memoryStorage
+            imageUrl = `${protocol}://${req.get('host')}/uploads/${filename}`;
         }
 
         const article = await articleService.createArticle({
@@ -92,7 +93,8 @@ const updateArticle = async (req, res, next) => {
 
         if (req.file) {
             const protocol = req.headers['x-forwarded-proto'] || req.protocol;
-            updateData.imageUrl = `${protocol}://${req.get('host')}/uploads/${req.file.filename}`;
+            const filename = req.file.filename || `temp-${Date.now()}`;
+            updateData.imageUrl = `${protocol}://${req.get('host')}/uploads/${filename}`;
         }
 
         const article = await articleService.updateArticle(
